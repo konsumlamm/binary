@@ -10,12 +10,29 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ghc: ['8.0.2', '8.2.2', '8.4.4', '8.6.5', '8.8.4', '8.10.7', '9.0.2', '9.2.8', '9.4.8', '9.6.7', '9.8.4', '9.10.3', '9.12.2', '9.14.1']
+        ghc:
+          - '8.0.2'
+          - '8.2.2'
+          - '8.4.4'
+          - '8.6.5'
+          - '8.8.4'
+          - '8.10.7'
+          - '9.0.2'
+          - '9.2.8'
+          - '9.4.8'
+          - '9.6.7'
+          - '9.8.4'
+          - '9.10.3'
+          - '9.12.2'
+          - '9.14.1'
+          - 'javascript-unknown-ghcjs-9.12.2'
+          - 'wasm32-wasi-9.12.2.20250327'
     steps:
       - uses: actions/checkout@v6
       - uses: haskell-actions/setup@v2
         id: setup-haskell
         with:
+          ghcup-release-channel: https://github.com/haskell/ghcup-metadata/blob/develop/ghcup-cross-0.0.8.yaml
           ghc-version: ${{ matrix.ghc }}
       - name: cache
         uses: actions/cache@v5
