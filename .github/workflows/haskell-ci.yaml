@@ -4,11 +4,15 @@ on:
   - push
   - pull_request
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   ghc-i386:
     runs-on: ubuntu-latest
     container:
-      image: i386/ubuntu:bionic
+      image: i386/ubuntu
     steps:
       - name: Install GHCup dependencies
         run: |
@@ -28,6 +32,7 @@ jobs:
     env:
       version: javascript-unknown-ghcjs-9.12.2
     steps:
+      - uses: actions/checkout@v6
       - name: Install emscripten & GHC
         run: |
           git clone https://github.com/emscripten-core/emsdk.git
@@ -44,6 +49,7 @@ jobs:
     env:
       version: wasm32-wasi-9.12.2.20250327
     steps:
+      - uses: actions/checkout@v6
       - name: Install WASM toolchain
         run: |
           git clone https://gitlab.haskell.org/ghc/ghc-wasm-meta.git
