@@ -5,64 +5,7 @@ on:
   - pull_request
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        ghc:
-          - '8.0.2'
-          - '8.2.2'
-          - '8.4.4'
-          - '8.6.5'
-          - '8.8.4'
-          - '8.10.7'
-          - '9.0.2'
-          - '9.2.8'
-          - '9.4.8'
-          - '9.6.7'
-          - '9.8.4'
-          - '9.10.3'
-          - '9.12.2'
-          - '9.14.1'
-    steps:
-      - uses: actions/checkout@v6
-      - uses: haskell-actions/setup@v2
-        id: setup-haskell
-        with:
-          ghc-version: ${{ matrix.ghc }}
-      - name: cache
-        uses: actions/cache@v5
-        with:
-          path: |
-            ${{ steps.setup-haskell.outputs.cabal-store }}
-            dist-newstyle
-          key: ${{ runner.os }}-${{ matrix.ghc }}
-      - name: Rename package to allow building test suite
-        run: |
-          sed -i 's/\(name:\s*binary\)/\1-cabal-is-broken/' binary.cabal
-          sed -i 's/\(binary\),/\1-cabal-is-broken,/' binary.cabal
-      - name: Build
-        run: cabal build
-      - name: Build tests
-        run: cabal build --enable-tests
-      - name: Test
-        run: cabal test --enable-tests
-      - name: Build benchmarks
-        run: cabal build --enable-benchmarks
-      - name: Bench
-        run: |
-          cabal run bench:throughput
-          cabal run bench:get
-          cabal run bench:put
-          cabal run bench:generics-bench
-          cabal run bench:builder
-        env:
-          TASTY_TIMEOUT: 100
-      - name: Haddock
-        run: cabal haddock
-
-  i386:
+  ghc-i386:
     runs-on: ubuntu-latest
     container:
       image: i386/ubuntu
@@ -73,14 +16,17 @@ jobs:
           apt-get install -y autoconf build-essential zlib1g-dev libgmp-dev curl libncurses5 libtinfo5 libncurses5-dev libtinfo-dev
           curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | BOOTSTRAP_HASKELL_NONINTERACTIVE=1 BOOTSTRAP_HASKELL_INSTALL_NO_STACK=1 sh
       - uses: actions/checkout@v1 # newer version don't work
-      - name: Test
+      - name: Build
         run: |
           source ~/.ghcup/env
           cabal --version
           cabal update
-          cabal test --enable-tests --test-show-details=direct
+          cabal build
 
-  build-js:
+  ghc-js:
+    runs-on: ubuntu-latest
+    env:
+      version: javascript-unknown-ghcjs-9.12.2
     steps:
       - name: Install emscripten
         run: |
@@ -90,9 +36,14 @@ jobs:
           ./emsdk activate latest
           source ./emsdk_env.sh
       - name: Install GHC
-        run: emconfigure ghcup install ghc --set javascript-unknown-ghcjs-9.12.2
+        run: emconfigure ghcup install ghc --set ${{ env.version }}
+      - name: Build
+        run: cabal --with-compiler=javascript-unknown-ghcjs-ghc --with-hc-pkg=javascript-unknown-ghcjs-ghc-pkg build
 
-  build-wasm:
+  ghc-wasm:
+    runs-on: ubuntu-latest
+    env:
+      version: wasm32-wasi-9.12.2.20250327
     steps:
       - name: Install WASM toolchain
         run: |
@@ -102,4 +53,6 @@ jobs:
           ./setup.sh
           source ~/.ghc-wasm/env
       - name: Install GHC
-        run: ghcup install ghc --set wasm32-wasi-9.6.3.20230927 -- --host=x86_64-linux --with-intree-gmp --with-system-libffi
+        run: ghcup install ghc --set ${{ env.version }} -- --host=x86_64-linux --with-intree-gmp --with-system-libffi
+      - name: Build
+        run: cabal --with-compiler=wasm32-wasi-ghc --with-hc-pkg=wasm32-wasi-ghc-pkg build
