@@ -41,7 +41,7 @@ jobs:
           ./emsdk activate latest
           source ./emsdk_env.sh
           ghcup config add-release-channel cross
-          ghcup --list
+          ghcup list
           emconfigure ghcup install ghc --set ${{ env.version }}
       - name: Build
         run: cabal --with-compiler=javascript-unknown-ghcjs-ghc --with-hc-pkg=javascript-unknown-ghcjs-ghc-pkg build
@@ -58,11 +58,11 @@ jobs:
           cd ghc-wasm-meta/
           export SKIP_GHC=yes
           ./setup.sh
-          source ~/.ghc-wasm/env
+          ~/.ghc-wasm/add_to_github_path.sh
       - name: Install GHC
         run: |
           ghcup config add-release-channel cross
-          ghcup --list
+          ghcup list
           ghcup install ghc --set ${{ env.version }} -- --host=x86_64-linux --with-intree-gmp --with-system-libffi
       - name: Build
         run: cabal --with-compiler=wasm32-wasi-ghc --with-hc-pkg=wasm32-wasi-ghc-pkg build
