@@ -33,6 +33,10 @@ jobs:
       version: javascript-unknown-ghcjs-9.12.2
     steps:
       - uses: actions/checkout@v6
+      - name: Setup
+        run: |
+          ghcup config add-release-channel cross
+          cabal update
       - name: Install emscripten & GHC
         run: |
           git clone https://github.com/emscripten-core/emsdk.git
@@ -41,7 +45,6 @@ jobs:
           ./emsdk activate latest
           source ./emsdk_env.sh
           cd ..
-          ghcup config add-release-channel cross
           emconfigure ghcup install ghc --set ${{ env.version }}
       - name: Build
         run: cabal --with-compiler=javascript-unknown-ghcjs-ghc --with-hc-pkg=javascript-unknown-ghcjs-ghc-pkg build
