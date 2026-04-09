@@ -14,19 +14,15 @@ jobs:
     container:
       image: i386/ubuntu
     steps:
-      - name: Install GHCup dependencies
+      - name: Install GHCup
         run: |
           apt-get update -y
-          apt-get install -y autoconf build-essential zlib1g-dev libgmp-dev curl libncurses5 libtinfo5 libncurses5-dev libtinfo-dev nodejs
-        # curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | BOOTSTRAP_HASKELL_NONINTERACTIVE=1 BOOTSTRAP_HASKELL_INSTALL_NO_STACK=1 sh
-      - uses: haskell/ghcup-setup@v1
+          apt-get install -y autoconf build-essential zlib1g-dev libgmp-dev curl libncurses5 libtinfo5 libncurses5-dev libtinfo-dev
+          curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | BOOTSTRAP_HASKELL_NONINTERACTIVE=1 BOOTSTRAP_HASKELL_INSTALL_NO_STACK=1 sh
+          echo "source ~/.ghcup/env" >> "$GITHUB_PATH"
       - uses: actions/checkout@v1 # newer version don't work
       - name: Build
-        run: |
-          source ~/.ghcup/env
-          cabal --version
-          cabal update
-          cabal build
+        run: cabal build
       - name: Test
         run: cabal --enable-tests test
 
@@ -52,7 +48,7 @@ jobs:
       - name: Build
         run: cabal --with-compiler=javascript-unknown-ghcjs-ghc --with-hc-pkg=javascript-unknown-ghcjs-ghc-pkg build
       - name: Test
-        run: cabal --with-compiler=javascript-unknown-ghcjs-ghc --with-hc-pkg=javascript-unknown-ghcjs-ghc-pkg --enable-tests test
+        run: cabal --with-compiler=javascript-unknown-ghcjs-ghc --with-hc-pkg=javascript-unknown-ghcjs-ghc-pkg test --enable-tests
 
   ghc-wasm:
     runs-on: ubuntu-latest
@@ -75,5 +71,4 @@ jobs:
         run: cabal --with-compiler=wasm32-wasi-ghc --with-hc-pkg=wasm32-wasi-ghc-pkg build
       - name: Test
         run: |
-          wasm32-wasi-ghc-pkg --version
-          cabal --with-compiler=wasm32-wasi-ghc --with-hc-pkg=wasm32-wasi-ghc-pkg --enable-tests test
+          cabal --with-compiler=wasm32-wasi-ghc --with-hc-pkg=wasm32-wasi-ghc-pkg test --enable-tests
