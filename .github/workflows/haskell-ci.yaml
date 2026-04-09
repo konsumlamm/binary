@@ -14,6 +14,7 @@ jobs:
     container:
       image: i386/ubuntu
     steps:
+      - uses: haskell-actions/setup@v2
       - name: Install GHCup dependencies
         run: |
           apt-get update -y
@@ -50,6 +51,8 @@ jobs:
           emconfigure ghcup install ghc --set ${{ env.version }}
       - name: Build
         run: cabal --with-compiler=javascript-unknown-ghcjs-ghc --with-hc-pkg=javascript-unknown-ghcjs-ghc-pkg build
+      - name: Test
+        run: cabal --with-compiler=javascript-unknown-ghcjs-ghc --with-hc-pkg=javascript-unknown-ghcjs-ghc-pkg --enable-tests test
 
   ghc-wasm:
     runs-on: ubuntu-latest
@@ -71,4 +74,6 @@ jobs:
       - name: Build
         run: cabal --with-compiler=wasm32-wasi-ghc --with-hc-pkg=wasm32-wasi-ghc-pkg build
       - name: Test
-        run: cabal --with-compiler=wasm32-wasi-ghc --with-hc-pkg=wasm32-wasi-ghc-pkg --enable-tests test
+        run: |
+          wasm32-wasi-ghc-pkg --version
+          cabal --with-compiler=wasm32-wasi-ghc --with-hc-pkg=wasm32-wasi-ghc-pkg --enable-tests test
