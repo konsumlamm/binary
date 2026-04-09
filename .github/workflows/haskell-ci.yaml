@@ -17,7 +17,7 @@ jobs:
       - name: Install GHCup dependencies
         run: |
           apt-get update -y
-          apt-get install -y autoconf build-essential zlib1g-dev libgmp-dev curl libncurses5 libtinfo5 libncurses5-dev libtinfo-dev
+          apt-get install -y autoconf build-essential zlib1g-dev libgmp-dev curl libncurses5 libtinfo5 libncurses5-dev libtinfo-dev nodejs
         # curl --proto '=https' --tlsv1.2 -sSf https://get-ghcup.haskell.org | BOOTSTRAP_HASKELL_NONINTERACTIVE=1 BOOTSTRAP_HASKELL_INSTALL_NO_STACK=1 sh
       - uses: haskell/ghcup-setup@v1
       - uses: actions/checkout@v1 # newer version don't work
