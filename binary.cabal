@@ -43,15 +43,15 @@ source-repository head
 library
   build-depends:   base >= 4.9 && < 5, bytestring >= 0.10.4, containers, array
   hs-source-dirs:  src
-  exposed-modules: Data.Binary,
-                   Data.Binary.Put,
-                   Data.Binary.Get,
-                   Data.Binary.Get.Internal,
+  exposed-modules: Data.Binary
+                   Data.Binary.Put
+                   Data.Binary.Get
+                   Data.Binary.Get.Internal
                    Data.Binary.Builder
 
-  other-modules:   Data.Binary.Class,
-                   Data.Binary.Internal,
-                   Data.Binary.Generic,
+  other-modules:   Data.Binary.Class
+                   Data.Binary.Internal
+                   Data.Binary.Generic
                    Data.Binary.FloatCast
 
   ghc-options:     -O2 -Wall -fliberate-case-threshold=1000

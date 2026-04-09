@@ -469,7 +469,7 @@ getInt8 = fromIntegral <$> getWord8
 -- force GHC to inline getWordXX
 {-# RULES
 "getWord8/readN" getWord8 = readN 1 B.unsafeHead
-#-}
+ #-}
 
 -- | Read a Word16 in big endian format
 getWord16be :: Get Word16
