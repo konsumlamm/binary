@@ -26,11 +26,13 @@ jobs:
           cabal --version
           cabal update
           cabal build
+      - name: Test
+        run: cabal --enable-tests test
 
   ghc-js:
     runs-on: ubuntu-latest
     env:
-      version: javascript-unknown-ghcjs-9.12.2
+      version: javascript-unknown-ghcjs-9.6.7
     steps:
       - uses: actions/checkout@v6
       - name: Setup
@@ -69,4 +71,4 @@ jobs:
       - name: Build
         run: cabal --with-compiler=wasm32-wasi-ghc --with-hc-pkg=wasm32-wasi-ghc-pkg build
       - name: Test
-        run: cabal --with-compiler=wasm32-wasi-ghc --with-hc-pkg=wasm32-wasi-ghc-pkg test
+        run: cabal --with-compiler=wasm32-wasi-ghc --with-hc-pkg=wasm32-wasi-ghc-pkg --enable-tests test
