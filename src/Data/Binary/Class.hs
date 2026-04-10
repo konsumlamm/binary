@@ -82,7 +82,7 @@ import qualified Data.ByteString.Builder.Prim as Prim
 import Data.List    (unfoldr)
 
 -- And needed for the instances:
-#if MIN_VERSION_base(4,10,0)
+#if MIN_VERSION_base(4,9,0)
 import Type.Reflection
 import Type.Reflection.Unsafe
 import Data.Kind (Type)
@@ -1045,7 +1045,7 @@ getSomeTypeRep = do
                        [ "Applied type: " ++ show f
                        , "To argument:  " ++ show x
                        ]
-        _ -> failure "Invalid SomeTypeRep" []
+        _ -> failure ("Invalid SomeTypeRep (tag " ++ show tag ++ ")") []
   where
     failure description info =
         fail $ unlines $ [ "GHCi.TH.Binary.getSomeTypeRep: "++description ]
