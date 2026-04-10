@@ -157,7 +157,6 @@ prop_Doublele = roundTripWith putDoublele getDoublele
 prop_Doublehost :: Double -> Property
 prop_Doublehost = roundTripWith putDoublehost getDoublehost
 
-#if MIN_VERSION_base(4,11,0)
 testTypeable :: Test
 testTypeable = testProperty "TypeRep" prop_TypeRep
 
@@ -184,10 +183,6 @@ atomicTypeReps =
 
 instance Arbitrary TypeRep where
     arbitrary = elements atomicTypeReps
-#else
-testTypeable :: Test
-testTypeable = testGroup "Skipping Typeable tests" []
-#endif
 
 -- done, partial and fail
 
