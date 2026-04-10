@@ -159,31 +159,28 @@ prop_Doublehost = roundTripWith putDoublehost getDoublehost
 
 #if MIN_VERSION_base(4,10,0)
 testTypeable :: Test
-testTypeable = testProperty "TypeRep" prop_TypeRep
+testTypeable = testGroup "TypeRep" $ map (\(name, rep) -> testProperty name (prop_TypeRep rep)) atomicTypeReps
 
 prop_TypeRep :: TypeRep -> Property
 prop_TypeRep = roundTripWith put get
 
-atomicTypeReps :: [TypeRep]
+atomicTypeReps :: [(String, TypeRep)]
 atomicTypeReps =
-    [ typeRep (Proxy :: Proxy ())
-    , typeRep (Proxy :: Proxy String)
-    , typeRep (Proxy :: Proxy Int)
-    , typeRep (Proxy :: Proxy (,))
-    , typeRep (Proxy :: Proxy ((,) (Maybe Int)))
-    , typeRep (Proxy :: Proxy Maybe)
-    , typeRep (Proxy :: Proxy 'Nothing)
-    , typeRep (Proxy :: Proxy 'Left)
-    , typeRep (Proxy :: Proxy "Hello")
-    , typeRep (Proxy :: Proxy 42)
-    , typeRep (Proxy :: Proxy '[1,2,3,4])
-    , typeRep (Proxy :: Proxy ('Left Int))
-    , typeRep (Proxy :: Proxy (Either Int String))
-    , typeRep (Proxy :: Proxy (() -> ()))
+    [ ("()",                typeRep (Proxy :: Proxy ()))
+    , ("String",            typeRep (Proxy :: Proxy String))
+    , ("Int",               typeRep (Proxy :: Proxy Int))
+    , ("(,)",               typeRep (Proxy :: Proxy (,)))
+    , ("(,) (Maybe Int)",   typeRep (Proxy :: Proxy ((,) (Maybe Int))))
+    , ("Maybe",             typeRep (Proxy :: Proxy Maybe))
+    , ("'Nothing",          typeRep (Proxy :: Proxy 'Nothing))
+    , ("'Left",             typeRep (Proxy :: Proxy 'Left))
+    , ("\"Hello\"",         typeRep (Proxy :: Proxy "Hello"))
+    , ("42",                typeRep (Proxy :: Proxy 42))
+    , ("'[1,2,3,4]",        typeRep (Proxy :: Proxy '[1,2,3,4]))
+    , ("'Left Int",         typeRep (Proxy :: Proxy ('Left Int)))
+    , ("Either Int String", typeRep (Proxy :: Proxy (Either Int String)))
+    , ("() -> ()",          typeRep (Proxy :: Proxy (() -> ())))
     ]
-
-instance Arbitrary TypeRep where
-    arbitrary = elements atomicTypeReps
 #else
 testTypeable :: Test
 testTypeable = testGroup "Skipping Typeable tests" []
