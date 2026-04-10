@@ -53,10 +53,10 @@ roundTrip :: (Eq a, Binary a) => a -> (L.ByteString -> L.ByteString) -> Bool
 roundTrip a f = a ==
     {-# SCC "decode.refragment.encode" #-} decode (f (encode a))
 
-roundTripWith ::  Eq a => (a -> Put) -> Get a -> a -> Property
+roundTripWith :: (Eq a, Show a) => (a -> Put) -> Get a -> a -> Property
 roundTripWith putter getter x =
     forAll positiveList $ \xs ->
-    x == runGet getter (refragment xs (runPut (putter x)))
+    x === runGet getter (refragment xs (runPut (putter x)))
 
 -- make sure that a test fails
 mustThrowError :: B a
@@ -157,6 +157,7 @@ prop_Doublele = roundTripWith putDoublele getDoublele
 prop_Doublehost :: Double -> Property
 prop_Doublehost = roundTripWith putDoublehost getDoublehost
 
+#if MIN_VERSION_base(4,10,0)
 testTypeable :: Test
 testTypeable = testProperty "TypeRep" prop_TypeRep
 
@@ -183,6 +184,10 @@ atomicTypeReps =
 
 instance Arbitrary TypeRep where
     arbitrary = elements atomicTypeReps
+#else
+testTypeable :: Test
+testTypeable = testGroup "Skipping Typeable tests" []
+#endif
 
 -- done, partial and fail
 
