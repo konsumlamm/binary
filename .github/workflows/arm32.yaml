@@ -1,0 +1,32 @@
+name: Test
+
+on:
+  - push
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: ['s390x', 'ppc64le', 'armv7', 'aarch64', 'riscv64']
+    steps:
+      - uses: actions/checkout@v6
+      - uses: uraimo/run-on-arch-action@v3
+        with:
+          arch: ${{ matrix.arch }}
+          distro: ubuntu_latest
+          githubToken: ${{ github.token }}
+          install: |
+            apt-get update -y
+            apt-get install -y ghc llvm-15
+          run: |
+            ghc --version
+            ghc --make Hello.hs -o hello -fllvm
+            ./hello
+            ghc --make -isrc BinarySize.hs -o binary_size_O0 -fno-safe-haskell -fforce-recomp -fllvm -O0
+            ./binary_size_O0
+            ghc --make -isrc BinarySize.hs -o binary_size_O1 -fno-safe-haskell -fforce-recomp -fllvm -O1
+            ./binary_size_O1
+            ghc --make -isrc BinarySize.hs -o binary_size_O2 -fno-safe-haskell -fforce-recomp -fllvm -O2
+            ./binary_size_O2

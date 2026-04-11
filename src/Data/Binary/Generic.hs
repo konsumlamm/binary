@@ -39,6 +39,7 @@ import Data.Kind
 #endif
 import GHC.Generics
 import Prelude -- Silence AMP warning.
+import Debug.Trace (traceShowId)
 
 -- Type without constructors
 instance GBinaryPut V1 where
@@ -93,7 +94,7 @@ instance ( GSumPut  a, GSumPut  b
     gput | PUTSUM(Word8) | PUTSUM(Word16) | PUTSUM(Word32) | PUTSUM(Word64)
          | otherwise = sizeError "encode" size
       where
-        size = unTagged (sumSize :: Tagged (a :+: b) Word64)
+        size = traceShowId $ unTagged (sumSize :: Tagged (a :+: b) Word64)
     {-# INLINE[0] gput #-}
 
 instance ( GSumGet  a, GSumGet  b
@@ -101,7 +102,7 @@ instance ( GSumGet  a, GSumGet  b
     gget | GETSUM(Word8) | GETSUM(Word16) | GETSUM(Word32) | GETSUM(Word64)
          | otherwise = sizeError "decode" size
       where
-        size = unTagged (sumSize :: Tagged (a :+: b) Word64)
+        size = traceShowId $ unTagged (sumSize :: Tagged (a :+: b) Word64)
     {-# INLINE[0] gget #-}
 
 sizeError :: Show size => String -> size -> error
